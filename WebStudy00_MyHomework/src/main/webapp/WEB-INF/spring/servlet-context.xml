@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:c="http://www.springframework.org/schema/c"
+   xmlns:p="http://www.springframework.org/schema/p"
+   xmlns:context="http://www.springframework.org/schema/context"
+   xmlns:mvc="http://www.springframework.org/schema/mvc"
+   xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+<!--    핸들러매핑있어야하고 -->
+<!--    핸들러어댑터도있어야하고 -->
+<!--    컨트롤러는 L.V.N반환해서 찾아야되니까 V.R도 필요 -->
+<!--    익셉션리절버, 밸리데이터도 있음 -->
+   <mvc:annotation-driven validator="Validator"></mvc:annotation-driven>
+
+   <bean id="Validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" 
+      p:validationMessageSource-ref="messageSource"
+   />
+
+   <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" 
+      p:prefix="/WEB-INF/jsp/"
+      p:suffix=".jsp"
+   />
+   
+   <bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
+   <bean class="org.springframework.web.servlet.view.BeanNameViewResolver" 
+      p:order="1"
+   />
+   
+   <bean class="org.springframework.web.servlet.view.tiles3.TilesConfigurer" 
+      p:definitions="/WEB-INF/tiles/*-tiles.xml"
+      p:preparerFactoryClass="org.springframework.web.servlet.view.tiles3.SpringBeanPreparerFactory"
+   />
+   <bean class="org.springframework.web.servlet.view.tiles3.TilesViewResolver" 
+      p:order="2"
+   />
+   
+   <context:component-scan base-package="com.springboard" use-default-filters="false">
+      <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+   </context:component-scan>
+   
+<!--    정적자원 처리방법 -->
+<!--    1. WAS의 DefaultServlet에게 정적자원 요청을 위임. -->
+<!--    <mvc:default-servlet-handler/> -->
+<!--    2. SimpleUrlHandlerMapping을 추가하고, /resources/** 패턴으로 정적자원에 대한 일괄 처리 지원. -->
+      <mvc:resources location="/resources/" mapping="/resources/**" cache-period="0" />
+
+<!--    필터와 같음 Spring 컨테이너안에서 사용, 컨트롤러전후에 Locale정보를 변경할때 사용, lang이라는 파라미터가 전달되면 그거가지고 Locale변경 -->
+   <mvc:interceptors>
+<!--       모든자원을 인터셉터하는거라면 mapping생략하고 빈만 넣어도 됨 -->
+<!--       <mvc:interceptor> -->
+<!--          <mvc:mapping path="/**"/> -->
+         <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" 
+            p:paramName="lang"
+         />
+
+   </mvc:interceptors>
+   
+  
+   
+</beans>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.springboard.board.dao.AlbaDAO">
+
+	<resultMap type="AlbaVO" id="albaMap" autoMapping="true">
+		<id property="alId" column="AL_ID" />
+		<association property="grade" javaType="GradeVO">
+			<result property="grCode" column="GR_CODE" />
+		</association>
+	</resultMap>
+	
+	<select id="selectAlbaList" resultMap="albaMap">
+		SELECT
+		AL_ID, AL_NAME, AL_AGE, AL_ADDR1
+		, AL_HP, GR_NAME,AL_GEN, AL_MAIL
+		, AL_CAREER, AL_SPEC
+		FROM ALBA A LEFT OUTER JOIN GRADE B ON (A.GR_CODE = B.GR_CODE)
+	</select>
+</mapper>
